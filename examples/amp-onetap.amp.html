@@ -1,0 +1,32 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>amp-onetap example</title>
+  <link rel="canonical" href="amps.html">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+  <script async custom-element="amp-onetap" src="https://cdn.ampproject.org/v0/amp-onetap-0.1.js"></script>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <style amp-custom>
+    #credential_picker_container {
+      border: none;
+      height: 330px;
+      position:fixed;
+      right: 20px;
+      top: 20px;
+      width: 375px;
+      z-index:9999;
+    }
+
+    #credential_picker_container iframe {
+      border: none;
+      width: 375px;
+      height: 330px;
+    }
+  </style>
+</head>
+<body>
+  <amp-onetap layout="responsive" width="150" height="80" data-client_id="114029609392094723033" data-callback = "handleToken"></amp-onetap>
+</body>
+</html>
