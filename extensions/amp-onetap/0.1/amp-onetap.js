@@ -33,13 +33,10 @@ export class AmpOnetap extends AMP.BaseElement {
     this.client_id = this.element.getAttribute('data-client_id');
 
     /** @pivate @const {string} */
-    this.callback = this.element.getAttribute('data-callback');
+    this.login_uri = this.element.getAttribute('data-login_uri');
 
-    if (!this.win[this.callback]){
-      this.win[this.callback] = (token)=>{
-        console.log(token);
-      }
-    }
+    /** @pivate @const {boolean} */
+    this.hidden = this.element.hasAttribute('amp-access-hide');
   }
 
   /** @override */
@@ -49,9 +46,9 @@ export class AmpOnetap extends AMP.BaseElement {
     const div = document.createElement('div');
     div.id = 'gis_id_onload';
     div.setAttribute('data-client_id', this.client_id);
-    div.setAttribute('data-callback', this.callback); 
+    div.setAttribute('data-login_uri', this.login_uri); 
     this.element.appendChild(div);
-    // Options to direct client requests to target server
+        // Options to direct client requests to target server
     this.win['__GIS_ID_OPTIONS__'] = {
       prompt_url: `${this.url}/gis/iframe/select`,
       status_url: `${this.url}/gis/status`,
@@ -63,15 +60,19 @@ export class AmpOnetap extends AMP.BaseElement {
    * @override
    */
   preconnectCallback(opt_onLayout) {
-    // Hosts the facebook SDK.
-    this.preconnect.preload(`${this.url}/gis/client`, 'script');
+    // Hosts the iframe script.
+    if (!this.hidden){
+      this.preconnect.preload(`${this.url}/gis/client`, 'script');
+    }
   }
 
   /** @override */
   layoutCallback() {
-    loadScript(this.win, `${this.url}/gis/client`, ()=>{
-      console.log('Client script loaded!')
-    });
+    if (!this.hidden){
+      loadScript(this.win, `${this.url}/gis/client`, ()=>{
+        console.log('Client script loaded!')
+      });
+    }
   }
 
   /** @override */
