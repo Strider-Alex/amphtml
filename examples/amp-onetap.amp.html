@@ -7,7 +7,14 @@
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
   <script async custom-element="amp-onetap" src="https://cdn.ampproject.org/v0/amp-onetap-0.1.js"></script>
+  <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script id="amp-access" type="application/json">
+    {
+      "authorization":"http://localhost:3000/amp-access?rid=READER_ID&url=SOURCE_URL",
+      "noPingback":true
+    }
+  </script>
   <style amp-custom>
     #credential_picker_container {
       border: none;
@@ -27,6 +34,9 @@
   </style>
 </head>
 <body>
-  <amp-onetap layout="responsive" width="150" height="80" data-client_id="114029609392094723033" data-callback = "handleToken"></amp-onetap>
+  <amp-onetap amp-access="NOT user" layout="responsive" width="150" height="80" data-client_id="114029609392094723033" data-login_uri = "http://localhost:3000" data-callback = "handleToken"></amp-onetap>
+  <div amp-access="user">
+      Hello world!
+  </div>
 </body>
 </html>
