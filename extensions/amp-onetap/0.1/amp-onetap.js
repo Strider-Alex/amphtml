@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import {Layout} from '../../../src/layout';
-import {loadScript} from '../../../3p/3p';
+import { Layout } from '../../../src/layout';
+import { loadScript } from '../../../3p/3p';
 
 /** @const {string} */
 const TAG = 'amp-onetap';
+/** @const {string} */
+const CREDENTIAL_PARMETER_NAME = 'credential';
 
 export class AmpOnetap extends AMP.BaseElement {
 
@@ -27,7 +29,7 @@ export class AmpOnetap extends AMP.BaseElement {
     super(element);
 
     /** @private @const {string} */
-    this.url = 'http://kefany.svl.corp.google.com:9879';
+    this.baseUrl = 'http://kefany.svl.corp.google.com:9879';
 
     /** @pivate @const {string} */
     this.client_id = this.element.getAttribute('data-client_id');
@@ -35,24 +37,11 @@ export class AmpOnetap extends AMP.BaseElement {
     /** @pivate @const {string} */
     this.login_uri = this.element.getAttribute('data-login_uri');
 
-    /** @pivate @const {boolean} */
-    this.hidden = this.element.hasAttribute('amp-access-hide');
-  }
+    /** @pivate {boolean} */
+    this.hidden = false;
 
-  /** @override */
-  buildCallback() {
-    // Create DIV tag required for OneTap API
-    const document = this.element.ownerDocument;
-    const div = document.createElement('div');
-    div.id = 'gis_id_onload';
-    div.setAttribute('data-client_id', this.client_id);
-    div.setAttribute('data-login_uri', this.login_uri); 
-    this.element.appendChild(div);
-        // Options to direct client requests to target server
-    this.win['__GIS_ID_OPTIONS__'] = {
-      prompt_url: `${this.url}/gis/iframe/select`,
-      status_url: `${this.url}/gis/status`,
-    };
+    /** @pivate {boolean} */
+    this.scriptLoaded = false;
   }
 
   /**
@@ -60,24 +49,67 @@ export class AmpOnetap extends AMP.BaseElement {
    * @override
    */
   preconnectCallback(opt_onLayout) {
+    console.log('preconnectCallback');
     // Hosts the iframe script.
-    if (!this.hidden){
-      this.preconnect.preload(`${this.url}/gis/client`, 'script');
-    }
+    this.preconnect.preload(`${this.baseUrl}/gis/client`, 'script');
   }
 
   /** @override */
   layoutCallback() {
-    if (!this.hidden){
-      loadScript(this.win, `${this.url}/gis/client`, ()=>{
-        console.log('Client script loaded!')
-      });
+    console.log('layoutCallback');
+    loadScript(this.win, `${this.baseUrl}/gis/client`, () => {
+      this.scriptLoaded = true;
+      if (!this.hidden) {
+        const options = {
+          client_id: this.client_id,
+          prompt_url: `${this.baseUrl}/gis/iframe/select`,
+          status_url: `${this.baseUrl}/gis/status`,
+          auto_select: true,
+          auto_prompt: true,
+          callback: (credentialResponse) => {
+            let postBody = {};
+            postBody[CREDENTIAL_PARMETER_NAME] = credentialResponse['credential'];
+            this._formSubmit(this.login_uri, postBody);
+          },
+        };
+        console.log(options);
+        gis.id.initialize(options);
+        gis.id.prompt();
+      }
+    });
+  }
+
+  /** @override */
+  unlayoutCallback() {
+    console.log('unlayoutCallback');
+    this.hidden = true;
+    if (this.scriptLoaded){
+      gis.id.cancel();
     }
   }
 
   /** @override */
   isLayoutSupported(layout) {
     return layout == Layout.RESPONSIVE;
+  }
+
+  /** @private */
+  _formSubmit(url, data) {
+    const document = this.element.ownerDocument;
+    const form = document.createElement('form');
+    document.body.appendChild(form);
+    form.method = 'post';
+    form.action = url;
+    if (data) {
+      Object.keys(data).map((name) => {
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = data[name];
+        form.appendChild(input);
+      });
+    }
+    form.submit();
   }
 }
 
