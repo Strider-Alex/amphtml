@@ -16,6 +16,7 @@
 
 import { Layout } from '../../../src/layout';
 import { loadScript } from '../../../3p/3p';
+import config from './config';
 
 /** @const {string} */
 const TAG = 'amp-onetap';
@@ -27,9 +28,10 @@ export class AmpOnetap extends AMP.BaseElement {
   /** @param {!AmpElement} element */
   constructor(element) {
     super(element);
+    console.log("hello")
 
     /** @private @const {string} */
-    this.baseUrl = 'http://kefany.svl.corp.google.com:9879';
+    this.baseUrl = config.gisBaseUrl;
 
     /** @pivate @const {string} */
     this.client_id = this.element.getAttribute('data-client_id');
@@ -65,7 +67,6 @@ export class AmpOnetap extends AMP.BaseElement {
           prompt_url: `${this.baseUrl}/gis/iframe/select`,
           status_url: `${this.baseUrl}/gis/status`,
           auto_select: true,
-          auto_prompt: true,
           callback: (credentialResponse) => {
             let postBody = {};
             postBody[CREDENTIAL_PARMETER_NAME] = credentialResponse['credential'];
