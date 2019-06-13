@@ -936,7 +936,8 @@ exports.extensionBundles = [
     name: 'amp-onetap',
     version: '0.1',
     latestVersion: '0.1',
-    type: TYPES.MISC
+    type: TYPES.MISC,
+    options: {hasCss: true},
   },
 ];
 

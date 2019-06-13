@@ -9,6 +9,7 @@
   <script async custom-element="amp-onetap" src="https://cdn.ampproject.org/v0/amp-onetap-0.1.js"></script>
   <script async custom-element="amp-access" src="https://cdn.ampproject.org/v0/amp-access-0.1.js"></script>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
   <script id="amp-access" type="application/json">
     {
       "authorization":"http://localhost:3000/amp-access?rid=READER_ID&url=SOURCE_URL",
@@ -22,27 +23,18 @@
     }
   </script>
   <style amp-custom>
-    #credential_picker_container {
-      border: none;
-      height: 330px;
-      position:fixed;
-      right: 20px;
-      top: 20px;
-      width: 375px;
-      z-index:9999;
-    }
-
-    #credential_picker_container iframe {
-      border: none;
-      width: 375px;
-      height: 330px;
+    html, body {
+      background-color: antiquewhite;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <amp-onetap amp-access="NOT user" layout="responsive" width="150" height="80" data-client_id="114029609392094723033" data-login_uri = "http://localhost:3000" data-callback = "handleToken"></amp-onetap>
+  <amp-onetap amp-access="NOT user" layout="nodisplay" data-iframe_url = "http://localhost:3000/onetap"></amp-onetap>
   <div amp-access="user">
-    <p>You are logged in.</p>
+    <template amp-access-template type="amp-mustache">
+        Hello {{given_name}}, you are logged in.
+    </template>
     <button class="gis_id_signout" on="tap:amp-access.login-sign-out">log out</button>
   </div>
 </body>

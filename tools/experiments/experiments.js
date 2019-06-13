@@ -458,6 +458,12 @@ const EXPERIMENTS = [
     spec: 'https://github.com/ampproject/amphtml/issues/22718',
     cleanupIssue: 'https://github.com/ampproject/amphtml/issues/22749',
   },
+  {
+    id: 'amp-onetap',
+    name: 'AMP OneTap',
+    spec: 'TODO',
+    cleanupIssue: 'TODO',
+  },
 ];
 
 if (getMode().localDev) {
