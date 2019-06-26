@@ -1,3 +1,3 @@
 export default {
-    gisBaseUrl: "example_url"
+    gisBaseUrl: "http://kefany.svl.corp.google.com:9879"
 }

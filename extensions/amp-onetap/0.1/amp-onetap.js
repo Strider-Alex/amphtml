@@ -28,7 +28,6 @@ export class AmpOnetap extends AMP.BaseElement {
   /** @param {!AmpElement} element */
   constructor(element) {
     super(element);
-    console.log("hello")
 
     /** @private @const {string} */
     this.baseUrl = config.gisBaseUrl;
@@ -41,9 +40,6 @@ export class AmpOnetap extends AMP.BaseElement {
 
     /** @pivate {boolean} */
     this.hidden = false;
-
-    /** @pivate {boolean} */
-    this.scriptLoaded = false;
   }
 
   /**
@@ -53,19 +49,17 @@ export class AmpOnetap extends AMP.BaseElement {
   preconnectCallback(opt_onLayout) {
     console.log('preconnectCallback');
     // Hosts the iframe script.
-    this.preconnect.preload(`${this.baseUrl}/gis/client`, 'script');
+    // this.preconnect.preload(`${this.baseUrl}/gsi/client`, 'script');
   }
 
   /** @override */
   layoutCallback() {
     console.log('layoutCallback');
-    loadScript(this.win, `${this.baseUrl}/gis/client`, () => {
-      this.scriptLoaded = true;
       if (!this.hidden) {
         const options = {
           client_id: this.client_id,
-          prompt_url: `${this.baseUrl}/gis/iframe/select`,
-          status_url: `${this.baseUrl}/gis/status`,
+          prompt_url: `${this.baseUrl}/gsi/iframe/select`,
+          status_url: `${this.baseUrl}/gsi/status`,
           auto_select: true,
           callback: (credentialResponse) => {
             let postBody = {};
@@ -74,19 +68,16 @@ export class AmpOnetap extends AMP.BaseElement {
           },
         };
         console.log(options);
-        gis.id.initialize(options);
-        gis.id.prompt();
+        google.accounts.id.initialize(options);
+        google.accounts.id.prompt();
       }
-    });
   }
 
   /** @override */
   unlayoutCallback() {
     console.log('unlayoutCallback');
     this.hidden = true;
-    if (this.scriptLoaded){
-      gis.id.cancel();
-    }
+    google.accounts.id.cancel();
   }
 
   /** @override */
