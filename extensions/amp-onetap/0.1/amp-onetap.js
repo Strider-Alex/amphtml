@@ -113,28 +113,36 @@ export class AmpOnetap extends AMP.BaseElement {
 
   /** @override */
   isLayoutSupported(layout) {
-    return layout == Layout.NODISPLAY;
+    return true || layout == Layout.CONTAINER;
   }
 
   /** @override */
   buildCallback() {
+    console.log('buildCallback');
     const doc = this.doc_;
     this.win.addEventListener('message', (event) => {
       // Make sure the postMessage comes from the iframe origin
       this.checkSafeOrigin_(event.origin);
       this.handlePostMessage_(event.data);
     });
-    Services.accessServiceForDocOrNull(this.element).then(accessService => {
-      console.log(accessService);
-      if (!accessService) {
-        this.createIframe_();
-        this.hidden_ = false;
-        this.showIframe_();
-        return;
-      }
-      accessService.onApplyAuthorizations(
-        () => this.onAccessApplyAuthorizations_());
-    })
+    this.win.addEventListener('load', (event) => {
+      this.processIframe_();
+    });
+  }
+
+  /** @override */
+  layoutCallback() {
+    console.log('layoutCallback');
+  }
+
+  /** @override */
+  onLayoutMeasure() {
+    console.log('onLayoutMeasure');
+  }
+  
+  /** @override */
+  unLayoutCallback() {
+    console.log('unLayoutCallback');
   }
 
   /** @private  */
@@ -149,7 +157,20 @@ export class AmpOnetap extends AMP.BaseElement {
     switch (data.action) {
       case ACTIONS.REDIRECT:
         if (this.redirectURL_ === null) {
-          location.reload();
+          Promise.all([
+            Services.accessServiceForDocOrNull(this.element),
+            Services.subscriptionsServiceForDocOrNull(this.element),
+          ]).then((services)=>{
+            if(services[0]){
+              services[0].runAuthorization_();
+            }
+            else if(services[1]){
+              services[1].resetPlatforms();
+            }
+            else{
+              location.reload();
+            }
+          })
         }
         else {
           location.href = this.redirectURL_;
@@ -181,10 +202,10 @@ export class AmpOnetap extends AMP.BaseElement {
   }
 
   /** @private */
-  onAccessApplyAuthorizations_() {
+  processIframe_() {
     const oldHidden = this.hidden_;
-    this.hidden_ = this.element.hasAttribute('amp-access')
-      && this.element.hasAttribute('amp-access-hide');
+    this.hidden_ = getComputedStyle(this.element).display == 'none';
+    console.log(this.hidden);
     if (oldHidden && !this.hidden_) {
       this.createIframe_();
       this.showIframe_();
@@ -199,14 +220,14 @@ export class AmpOnetap extends AMP.BaseElement {
 
   /** @private */
   showIframe_() {
-    this.doc_.body.appendChild(this.iframe_);
+    this.element.appendChild(this.iframe_);
     console.log('shown');
   }
 
   /** @private */
   hideIframe_() {
     if (this.iframe_){
-      this.doc_.body.removeChild(this.iframe_);
+      this.element.removeChild(this.iframe_);
     }
   }
 
