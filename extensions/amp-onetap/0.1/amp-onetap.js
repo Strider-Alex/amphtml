@@ -122,7 +122,7 @@ export class AmpOnetap extends AMP.BaseElement {
     const doc = this.doc_;
     this.win.addEventListener('message', (event) => {
       // Make sure the postMessage comes from the iframe origin
-      this.checkSafeOrigin_(event.origin);
+      this.checkMessageOrigin_(event.origin);
       this.handlePostMessage_(event.data);
     });
     this.win.addEventListener('load', (event) => {
@@ -146,7 +146,7 @@ export class AmpOnetap extends AMP.BaseElement {
   }
 
   /** @private  */
-  checkSafeOrigin_(origin) {
+  checkMessageOrigin_(origin) {
     if (origin !== this.iframeOrigin_) {
       throw new Error(`Origin check failed: expect ${origin}, get ${this.iframeOrigin_}`);
     }
@@ -156,7 +156,8 @@ export class AmpOnetap extends AMP.BaseElement {
   handlePostMessage_(data) {
     switch (data.action) {
       case ACTIONS.REDIRECT:
-        if (this.redirectURL_ === null) {
+        const redirectURL = data.detail.url;
+        if (!redirectURL || redirectURL === location.href) {
           Promise.all([
             Services.accessServiceForDocOrNull(this.element),
             Services.subscriptionsServiceForDocOrNull(this.element),
@@ -173,7 +174,7 @@ export class AmpOnetap extends AMP.BaseElement {
           })
         }
         else {
-          location.href = this.redirectURL_;
+          location.href = redirectURL_;
         }
         break;
       case ACTIONS.RESIZE:
@@ -195,6 +196,7 @@ export class AmpOnetap extends AMP.BaseElement {
         break;
       case ACTIONS.CLOSE:
         this.doc_.removeEventListener('click', this.onClick_);
+        this.hideIframe_();
         break;
       default:
         throw new Error(`Unknown action type: ${data.action}`);
