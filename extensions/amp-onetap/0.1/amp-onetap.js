@@ -122,8 +122,9 @@ export class AmpOnetap extends AMP.BaseElement {
     const doc = this.doc_;
     this.win.addEventListener('message', (event) => {
       // Make sure the postMessage comes from the iframe origin
-      this.checkMessageOrigin_(event.origin);
-      this.handlePostMessage_(event.data);
+      if (this.validateMessageOrigin_(event.origin)){
+        this.handlePostMessage_(event.data);
+      }
     });
     this.win.addEventListener('load', (event) => {
       this.processIframe_();
@@ -146,10 +147,12 @@ export class AmpOnetap extends AMP.BaseElement {
   }
 
   /** @private  */
-  checkMessageOrigin_(origin) {
+  validateMessageOrigin_(origin) {
     if (origin !== this.iframeOrigin_) {
-      throw new Error(`Origin check failed: expect ${origin}, get ${this.iframeOrigin_}`);
+      console.log(`Origin check failed: expect ${origin}, get ${this.iframeOrigin_}`);
+      return false;
     }
+    return true;
   }
 
   /** @private */
