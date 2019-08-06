@@ -22,7 +22,6 @@
  * <amp-onetap
  *   layout="nodisplay"
  *   data-iframe_url="https://www.example.com/onetap-login"
- *   data-redirect_url="https://www.example.com/index">
  * </amp-onetap>
  * </code>
  */
@@ -90,9 +89,6 @@ export class AmpOnetap extends AMP.BaseElement {
     this.iframeURL_ = this.element.getAttribute('data-iframe_url');
 
     /** @private @const {string} */
-    this.redirectURL_ = this.element.getAttribute('data-redirect_url');
-
-    /** @private @const {string} */
     this.iframeOrigin_ = (new URL(this.iframeURL_)).origin;
 
     /** @private {boolean} */
@@ -105,15 +101,15 @@ export class AmpOnetap extends AMP.BaseElement {
     this.iframe_;
 
     /** @private */
-    this.onClick_ = () => {
-      this.doc_.removeEventListener('click', this.onClick_);
+    this.onClickOutside_ = () => {
+      this.doc_.removeEventListener('click', this.onClickOutside_);
       this.hideIframe_();
     };
   }
 
   /** @override */
   isLayoutSupported(layout) {
-    return true || layout == Layout.CONTAINER;
+    return layout == Layout.CONTAINER;
   }
 
   /** @override */
@@ -122,7 +118,7 @@ export class AmpOnetap extends AMP.BaseElement {
     const doc = this.doc_;
     this.win.addEventListener('message', (event) => {
       // Make sure the postMessage comes from the iframe origin
-      if (this.validateMessageOrigin_(event.origin)){
+      if (this.validateMessageOrigin_(event.origin)) {
         this.handlePostMessage_(event.data);
       }
     });
@@ -140,7 +136,7 @@ export class AmpOnetap extends AMP.BaseElement {
   onLayoutMeasure() {
     console.log('onLayoutMeasure');
   }
-  
+
   /** @override */
   unLayoutCallback() {
     console.log('unLayoutCallback');
@@ -149,7 +145,6 @@ export class AmpOnetap extends AMP.BaseElement {
   /** @private  */
   validateMessageOrigin_(origin) {
     if (origin !== this.iframeOrigin_) {
-      console.log(`Origin check failed: expect ${origin}, get ${this.iframeOrigin_}`);
       return false;
     }
     return true;
@@ -159,26 +154,18 @@ export class AmpOnetap extends AMP.BaseElement {
   handlePostMessage_(data) {
     switch (data.action) {
       case ACTIONS.REDIRECT:
-        const redirectURL = data.detail.url;
-        if (!redirectURL || redirectURL === location.href) {
-          Promise.all([
-            Services.accessServiceForDocOrNull(this.element),
-            Services.subscriptionsServiceForDocOrNull(this.element),
-          ]).then((services)=>{
-            if(services[0]){
-              services[0].runAuthorization_();
-            }
-            else if(services[1]){
-              services[1].resetPlatforms();
-            }
-            else{
-              location.reload();
-            }
-          })
-        }
-        else {
-          location.href = redirectURL_;
-        }
+        Promise.all([
+          Services.accessServiceForDocOrNull(this.element),
+          Services.subscriptionsServiceForDocOrNull(this.element),
+        ]).then((services) => {
+          if (services[0]) {
+            services[0].runAuthorization_();
+          } else if (services[1]) {
+            services[1].resetPlatforms();
+          } else {
+            location.reload();
+          }
+        })
         break;
       case ACTIONS.RESIZE:
         this.iframe_.style.height = data.detail.newHeight + 'px';
@@ -186,19 +173,17 @@ export class AmpOnetap extends AMP.BaseElement {
       case ACTIONS.UI_MODE:
         if (data.detail.uiMode === UI_MODES.BOTTOM_SHEET) {
           Object.assign(this.iframe_.style, bottomSheetStyle);
-        }
-        else if (data.detail.uiMode === UI_MODES.CARD) {
+        } else if (data.detail.uiMode === UI_MODES.CARD) {
           Object.assign(this.iframe_.style, cardStyle);
-        }
-        else {
+        } else {
           throw new Error(`Unknown UI mode: ${data.detail.uiMode}`);
         }
         break;
       case ACTIONS.DISPLAY:
-        this.clickListener_ = this.doc_.addEventListener('click', this.onClick_, false)
+        this.clickListener_ = this.doc_.addEventListener('click', this.onClickOutside_, false)
         break;
       case ACTIONS.CLOSE:
-        this.doc_.removeEventListener('click', this.onClick_);
+        this.doc_.removeEventListener('click', this.onClickOutside_);
         this.hideIframe_();
         break;
       default:
@@ -231,14 +216,14 @@ export class AmpOnetap extends AMP.BaseElement {
 
   /** @private */
   hideIframe_() {
-    if (this.iframe_){
+    if (this.iframe_) {
       this.element.removeChild(this.iframe_);
     }
   }
 
   /** @private */
   createIframe_() {
-    if (!this.iframe_){
+    if (!this.iframe_) {
       this.iframe_ = this.doc_.createElement('iframe');
       this.iframe_.src = this.iframeURL_;
       this.iframe_.id = IFRAME_ID;

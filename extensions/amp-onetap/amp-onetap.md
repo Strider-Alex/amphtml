@@ -1,24 +1,9 @@
-<!--
-  1. Change "category" below to one of:
-       ads-analytics
-       dynamic-content
-       layout
-       media
-       presentation
-       social
-
-  2. Remove any of the "formats" that don't apply.
-     You can also add the "ads" and "stories" formats if they apply.
-
-  3. And remove this comment! (no empty lines before "---")
--->
 ---
-$category: presentation
+$category: dynamic-content
 formats:
   - websites
-  - email
 teaser:
-  text: FILL THIS IN.
+  text: Use Google OneTap to sign in.
 ---
 <!--
 Copyright 2019 The AMP HTML Authors. All Rights Reserved.
@@ -41,11 +26,11 @@ limitations under the License.
 <table>
   <tr>
     <td width="40%"><strong>Description</strong></td>
-    <td>FILL THIS IN</td>
+    <td>AMP OneTap enables Providers to support Google OneTap in AMP</td>
   </tr>
   <tr>
     <td width="40%"><strong>Availability</strong></td>
-    <td>FILL THIS IN</td>
+    <td>Not available for now</td>
   </tr>
   <tr>
     <td width="40%"><strong>Required Script</strong></td>
@@ -53,26 +38,24 @@ limitations under the License.
   </tr>
   <tr>
     <td class="col-fourty"><strong><a href="https://amp.dev/documentation/guides-and-tutorials/develop/style_and_layout/control_layout">Supported Layouts</a></strong></td>
-    <td>FILL THIS IN</td>
+    <td>container</td>
   </tr>
   <tr>
     <td width="40%"><strong>Examples</strong></td>
-    <td>FILL THIS IN</td>
+    <td>TODO</td>
   </tr>
 </table>
 
 ## Behavior
 
-FILL THIS IN. What does this extension do?
+This component works as a container to load the intermediate iframe in amp-onetap.
 
 ## Attributes
 
-FILL THIS IN. Does this extension allow for properties to configure?
-
 <table>
   <tr>
-    <td width="40%"><strong>data-my-attribute</strong></td>
-    <td>FILL THIS IN. This table <strong>must</strong> be written in HTML.</td>
+    <td width="40%"><strong>data-iframe_url</strong></td>
+    <td>URL of the intermediate iframe</td>
   </tr>
 </table>
 
