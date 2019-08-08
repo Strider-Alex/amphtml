@@ -1,0 +1,147 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>amp-onetap example</title>
+  <link rel="canonical" href="amps.html">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+  <script async custom-element="amp-onetap" src="https://cdn.ampproject.org/v0/amp-onetap-0.1.js"></script>
+  <script async custom-element="amp-subscriptions" src="https://cdn.ampproject.org/v0/amp-subscriptions-0.1.js"></script>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
+  <script type="application/ld+json">
+    {
+      "@context": "http://localhost:8000",
+      "@type": "Blog",
+      "isAccessibleForFree": true,
+      "publisher": {
+        "@type": "Person",
+        "name": "Kefan Yang"
+      },
+      "isPartOf": {
+        "@type": ["Product"],
+        "name" : "Kefan Demo websites",
+        "productID": "localhost:basic"
+      }
+    }
+  </script>
+  <script id="amp-subscriptions" type="application/json">
+    {
+      "services":[
+        {
+          "authorizationUrl":"http://localhost:3000/amp-subscriptions",
+          "actions": {
+            "login": "http://localhost:3000/login",
+            "subscribe": "http://localhost:3000/empty",
+            "logout": "http://localhost:3000/logout",
+            "google-sign-in": "http://localhost:3000/oauth/google-sign-in"
+          }
+        }
+      ]
+    }
+  </script>
+  <style amp-custom>
+    html, body {
+      padding:5px;
+      height: 100%;
+    }
+    .card {
+      padding: 10px;
+      margin: 10px;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+      transition: 0.3s;
+      border-radius: 5px;
+      background-color: white;
+    }
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+    .container {
+      padding: 2px 16px;
+    }
+    .premium {
+      background-color: #F4C20D;
+    }
+    .title {
+      text-align: center;
+      font-size: 24px;
+      font-family: "Segoe UI",Arial,sans-serif;
+      color: #5f5f5f;
+    }
+    amp-img {
+      border-radius: 5px;
+    }
+    h4 {
+      margin-block-start: 10px;
+      margin-block-end: 10px;
+    }
+    button {
+      border-radius: 8px;
+      background-color: #008CBA;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 10px;
+      cursor: pointer;
+    }
+    amp-subscriptions-dialog {
+      padding: 10px;
+      background-color: aliceblue;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">AMP OneTap Example APP</h1>
+  <amp-onetap subscriptions-actions subscriptions-display="NOT data.loggedIn" layout="container" data-iframe_url = "http://localhost:3000/onetap"></amp-onetap>
+  <button subscriptions-action="login" subscriptions-actions subscriptions-display="NOT data.loggedIn">Sign In</button>
+  <button subscriptions-action="google-sign-in" subscriptions-actions subscriptions-display="NOT data.loggedIn">Sign In with Google</button>
+  <button subscriptions-action="logout" subscriptions-actions subscriptions-display="data.loggedIn" class="g_id_signout">Logout</button>
+  <div class="premium card">
+    <section subscriptions-section="content-not-granted">
+      Please login to see the <b>SECRET</b> content.
+    </section>
+    <section subscriptions-section="content">
+      <div class="card">
+        <amp-img src="https://www.w3schools.com/howto/img_lights.jpg" alt="Avatar" width="600" height="400"
+          layout="responsive"></amp-img>
+        <div class="container">
+          <h4><b>Northern Lights</b></h4>
+          <p>This is SECRET content.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="card">
+    <amp-img src="https://www.w3schools.com/howto/img_woods.jpg" alt="Avatar" width="600" height="400" layout="responsive"></amp-img>
+    <div class="container">
+      <h4><b>Woods</b></h4>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+    </div>
+  </div>
+  <div class="card">
+    <amp-img src="https://www.w3schools.com/howto/img_mountains.jpg" alt="Avatar" width="600" height="400" layout="responsive"></amp-img>
+    <div class="container">
+      <h4><b>Mountains</b></h4>
+      <p>Quisque ut hendrerit nibh. Mauris tempor lorem ac metus cursus semper. </p>
+    </div>
+  </div>
+  <template type="amp-mustache" subscriptions-dialog subscriptions-display="data.loggedIn">
+    <amp-img alt="User avatar"
+      src="{{data.picture}}"
+      width="50"
+      height="50"
+      layout="fixed">
+    </amp-img>
+    <div>
+      Hello {{data.given_name}}, you are logged in.
+    </div>
+    <div>
+      Email: {{data.email}}
+    </div>
+  </template>
+</body>
+</html>

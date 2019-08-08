@@ -400,6 +400,12 @@ const EXPERIMENTS = [
       ' tasks if a previous micro task execution took too long',
     cleanupIssue: 'https://github.com/ampproject/amphtml/issues/23464',
   },
+  {
+    id: 'amp-onetap',
+    name: 'AMP OneTap',
+    spec: 'TODO',
+    cleanupIssue: 'TODO',
+  },
 ];
 
 if (getMode().localDev) {
